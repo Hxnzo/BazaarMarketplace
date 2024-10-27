@@ -37,7 +37,7 @@ const Signup = ({ navigation }) => {
       });
 
       console.log('User account created & saved in MongoDB!');
-      navigation.replace('Home');
+      navigation.replace('Main');
     } 
     catch (error) {
       console.error(error);
