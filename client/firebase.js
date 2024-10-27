@@ -21,12 +21,14 @@ try {
   auth = initializeAuth(firebaseApp, {
     persistence: getReactNativePersistence(AsyncStorage),
   });
-} catch (error) {
+} 
+catch (error) {
   // If Firebase Auth is already initialized, use getAuth instead
   if (error.code === 'auth/already-initialized') {
     auth = getAuth(firebaseApp);
-  } else {
-    throw error; // If it's a different error, throw it
+  } 
+  else {
+    throw error;
   }
 }
 

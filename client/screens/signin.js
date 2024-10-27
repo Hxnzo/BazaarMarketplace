@@ -10,22 +10,28 @@ const Signin = ({ navigation }) => {
   const handleSignin = async () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      
       console.log('User signed in!');
-      navigation.replace('Home'); // Redirect to Home screen after sign-in
-    } catch (error) {
+      navigation.navigate('Main');
+    } 
+    catch (error) {
       console.error(error);
       alert('Invalid credentials');
     }
-  };
+  };  
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sign In</Text>
+
       <TextInput style={styles.input} placeholder="Email" placeholderTextColor="#EEEEEE" onChangeText={setEmail} value={email} keyboardType="email-address" autoCapitalize="none" />
+
       <TextInput style={styles.input} placeholder="Password" placeholderTextColor="#EEEEEE" onChangeText={setPassword} value={password} secureTextEntry />
+
       <TouchableOpacity style={styles.button} onPress={handleSignin}>
         <Text style={styles.buttonText}>Sign In</Text>
       </TouchableOpacity>
+
       <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
         <Text style={styles.link}>Don't have an account? Sign Up</Text>
       </TouchableOpacity>
@@ -40,6 +46,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#222831',
   },
+
   title: {
     fontSize: 34,
     marginBottom: 20,
@@ -47,6 +54,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#EEEEEE', 
   },
+
   input: {
     height: 50,
     borderWidth: 1,
@@ -56,17 +64,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     color: '#EEEEEE', 
   },
+
   button: {
     backgroundColor: '#00ADB5',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
   },
+
   buttonText: {
     color: '#EEEEEE',
     fontWeight: 'bold',
     fontSize: 16,
   },
+
   link: {
     marginTop: 20,
     textAlign: 'center',
