@@ -7,7 +7,7 @@ const Home = ({ navigation }) => {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      navigation.replace('Signin'); // Go back to the Signin screen after signing out
+      navigation.replace('Signin'); 
     } catch (error) {
       console.error('Error signing out: ', error);
     }
