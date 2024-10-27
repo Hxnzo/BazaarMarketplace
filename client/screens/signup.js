@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
+import axios from 'axios';
 
 const Signup = ({ navigation }) => {
   const [firstName, setFirstName] = useState('');
@@ -20,8 +21,22 @@ const Signup = ({ navigation }) => {
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      console.log('User account created & signed in!');
+      // Create user with Firebase and get the UID
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const uid = userCredential.user.uid;
+
+      // Send user data to the backend to save in MongoDB
+      await axios.post('http://10.0.2.2:3001/api/signup', {
+        uid,
+        firstName,
+        lastName,
+        email,
+        city,
+        province,
+        phoneNumber,
+      });
+
+      console.log('User account created & saved in MongoDB!');
       navigation.replace('Home');
     } catch (error) {
       console.error(error);
