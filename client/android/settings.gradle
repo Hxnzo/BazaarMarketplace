@@ -44,7 +44,7 @@ if (getRNMinorVersion() >= 75) {
   }
 }
 
-rootProject.name = 'Bazaar'
+rootProject.name = 'BazaarClient'
 
 dependencyResolutionManagement {
   versionCatalogs {
