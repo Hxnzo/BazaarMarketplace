@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { signOut } from 'firebase/auth';
-import { auth } from '../firebase';
+import { auth } from '../../firebase';
 
 const Home = ({ navigation }) => {
   const handleSignOut = async () => {
@@ -17,7 +17,7 @@ const Home = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to the Home Page!</Text>
       <TouchableOpacity style={styles.button} onPress={handleSignOut}>
-        <Text style={styles.buttonText}>Sign Out</Text>
+        <Text style={styles.buttonText}>Sign Out!</Text>
       </TouchableOpacity>
     </View>
   );
