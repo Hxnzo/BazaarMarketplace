@@ -110,7 +110,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.bazaar"
+    namespace "com.bazaar.client"
     defaultConfig {
         applicationId "com.bazaar"
         minSdkVersion rootProject.ext.minSdkVersion
