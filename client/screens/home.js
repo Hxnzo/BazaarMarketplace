@@ -5,6 +5,8 @@ const Home = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Marketplace</Text>
+      <Text style={styles.infoText}>SEE ALL AD POSTINGS HERE!</Text>
+      <Text style={{ color:'#EEEEEE' }}>Development In Progress</Text>
     </View>
   );
 };
@@ -19,6 +21,15 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 34,
     marginBottom: 20,
+    paddingTop: 30,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#EEEEEE',
+  },
+
+  infoText: {
+    fontSize: 20,
+    marginBottom: 10,
     paddingTop: 20,
     textAlign: 'center',
     fontWeight: 'bold',
