@@ -6,8 +6,9 @@ import { View, StyleSheet } from 'react-native';
 import Signin from './screens/signin';
 import Signup from './screens/signup';
 import Home from './screens/home';
-import PostProduct from './screens/postProduct';
+import PostProduct from './screens/products';
 import Profile from './screens/profile';
+import CreateProduct from './screens/createProduct';
 import { Ionicons } from '@expo/vector-icons';
 
 const Stack = createStackNavigator();
@@ -52,6 +53,7 @@ export default function App() {
         <Stack.Screen name="Signin" component={ScreenWrapper(Signin)} />
         <Stack.Screen name="Signup" component={ScreenWrapper(Signup)} />
         <Stack.Screen name="Main" component={TabNavigator} />
+        <Stack.Screen name="CreateProduct" component={ScreenWrapper(CreateProduct)} />
       </Stack.Navigator>
     </NavigationContainer>
   );
