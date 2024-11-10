@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { auth } from '../firebase';
@@ -17,7 +17,6 @@ const Products  = ({ navigation }) => {
     }
   };
 
-  // Fetch products when screen is focused
   useFocusEffect(
     useCallback(() => {
       fetchProducts();
@@ -31,6 +30,7 @@ const Products  = ({ navigation }) => {
         <Text style={styles.productDescription}>{item.description}</Text>
         <Text style={styles.productPrice}>${item.price}</Text>
       </View>
+      
       <Image
         source={{ uri: item.imageUrl }}
         style={styles.productImage}
@@ -45,19 +45,16 @@ const Products  = ({ navigation }) => {
       
       {products.length === 0 ? (
         <Text style={styles.noListings}>No listings</Text>
-      ) : (
-        <FlatList
-          data={products}
-          renderItem={renderProduct}
-          keyExtractor={(item) => item._id}
-          contentContainerStyle={styles.list}
-        />
-      )}
+        ) : (
+          <FlatList
+            data={products}
+            renderItem={renderProduct}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={styles.list}
+          />
+        )}
       
-      <TouchableOpacity 
-        style={styles.addButton} 
-        onPress={() => navigation.navigate('CreateProduct')}
-      >
+      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('CreateProduct')}>
         <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
     </View>
@@ -69,6 +66,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#222831',
   },
+
   title: {
     fontSize: 34,
     marginBottom: 20,
@@ -77,15 +75,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#EEEEEE',
   },
+
   noListings: {
     fontSize: 20,
     color: '#EEEEEE',
     textAlign: 'center',
     marginTop: 50,
   },
+
   list: {
     paddingHorizontal: 20,
   },
+
   productBox: {
     flexDirection: 'row',
     backgroundColor: '#393E46',
@@ -94,45 +95,51 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignItems: 'center',
   },
+
   productInfo: {
     flex: 1,
     marginRight: 10,
   },
+
   productTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#EEEEEE',
   },
+
   productDescription: {
     fontSize: 14,
     color: '#EEEEEE',
     marginVertical: 5,
   },
+
   productPrice: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#00ADB5',
   },
+
   productImage: {
     width: 80,
     height: 80,
     borderRadius: 8,
   },
+
   addButton: {
     position: 'absolute',
     right: 20,
     bottom: 20,
     backgroundColor: '#00ADB5',
-    borderRadius: 30,
+    borderRadius: 15,
     width: 60,
     height: 60,
     alignItems: 'center',
     justifyContent: 'center',
   },
+
   addButtonText: {
-    color: '#EEEEEE',
-    fontSize: 24,
-    fontWeight: 'bold',
+    color: '#000000',
+    fontSize: 35,
   },
 });
 

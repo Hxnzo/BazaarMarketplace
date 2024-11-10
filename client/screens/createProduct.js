@@ -97,41 +97,16 @@ const CreateProduct = ({ navigation }) => {
 
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.label}>Title</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Title"
-          placeholderTextColor="#EEEEEE"
-          value={title}
-          onChangeText={setTitle}
-        />
+        <TextInput style={styles.input} placeholder="Title" placeholderTextColor="#EEEEEE" value={title} onChangeText={setTitle}/>
 
         <Text style={styles.label}>Description</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Description"
-          placeholderTextColor="#EEEEEE"
-          value={description}
-          onChangeText={setDescription}
-        />
+        <TextInput style={styles.input} placeholder="Description" placeholderTextColor="#EEEEEE" value={description} onChangeText={setDescription}/>
 
         <Text style={styles.label}>Price</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Price"
-          placeholderTextColor="#EEEEEE"
-          keyboardType="numeric"
-          value={price}
-          onChangeText={setPrice}
-        />
+        <TextInput style={styles.input} placeholder="Price" placeholderTextColor="#EEEEEE" keyboardType="numeric" value={price} onChangeText={setPrice}/>
 
         <Text style={styles.label}>Location</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Location"
-          placeholderTextColor="#EEEEEE"
-          value={location}
-          onChangeText={setLocation}
-        />
+        <TextInput style={styles.input} placeholder="Location" placeholderTextColor="#EEEEEE" value={location} onChangeText={setLocation}/>
 
         <TouchableOpacity onPress={pickImageAsync} style={styles.imageButton}>
           <Text style={styles.imageButtonText}>Select Image</Text>
@@ -159,6 +134,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#222831',
   },
+
   title: {
     fontSize: 34,
     fontWeight: 'bold',
@@ -166,13 +142,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingTop: 40,
   },
+
   content: {
     padding: 20,
   },
+
   label: {
     fontSize: 16,
     color: '#00ADB5',
   },
+
   input: {
     backgroundColor: '#393E46',
     color: '#EEEEEE',
@@ -180,6 +159,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 8,
   },
+  
   imageButton: {
     backgroundColor: '#00ADB5',
     padding: 15,
@@ -187,11 +167,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignItems: 'center',
   },
+
   imageButtonText: {
     color: '#EEEEEE',
     fontSize: 16,
     fontWeight: 'bold',
   },
+
   imagePreview: {
     width: '100%',
     height: 200,
@@ -199,12 +181,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
     resizeMode: 'contain',
   },
+
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingBottom: 20,
   },
+
   saveButton: {
     backgroundColor: '#00ADB5',
     padding: 15,
@@ -212,11 +196,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '48%',
   },
+
   saveButtonText: {
     color: '#EEEEEE',
     fontSize: 16,
     fontWeight: 'bold',
   },
+
   cancelButton: {
     backgroundColor: '#FF6B6B',
     padding: 15,
@@ -224,6 +210,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '48%',
   },
+
   cancelButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
