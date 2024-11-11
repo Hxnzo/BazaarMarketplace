@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 
-const ViewProduct = ({ route }) => {
+const ViewProduct = ({ route, navigation }) => {
   const { product } = route.params;
   const [userData, setUserData] = useState(null);
 
@@ -13,6 +13,7 @@ const ViewProduct = ({ route }) => {
   const fetchUserData = async () => {
     try {
       const response = await fetch(`http://10.0.2.2:3001/api/user/${product.userId}`);
+      
       if (response.ok) {
         const data = await response.json();
         setUserData(data);
@@ -26,6 +27,10 @@ const ViewProduct = ({ route }) => {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <FontAwesome name="arrow-left" size={20} color="#222831" />
+      </TouchableOpacity>
+
       {/* Product Image */}
       <Image source={{ uri: product.imageUrl }} style={styles.productImage} />
 
@@ -60,19 +65,33 @@ const styles = StyleSheet.create({
     backgroundColor: '#222831',
     padding: 20,
   },
+
+  backButton: {
+    position: 'absolute',
+    top: 30,
+    left: 20,
+    zIndex: 1,
+    backgroundColor: '#00ADB5',
+    padding: 10,
+    borderRadius: 8,
+  },
+
   productImage: {
     width: '100%',
     height: 250,
     borderRadius: 8,
+    marginTop: 60,
     marginBottom: 20,
-    resizeMode: 'cover',
+    resizeMode: 'contain',
   },
+
   titleContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
   },
+
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -80,11 +99,13 @@ const styles = StyleSheet.create({
     flex: 1,
     flexWrap: 'wrap',
   },
+
   price: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#00ADB5',
   },
+
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -92,24 +113,29 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 5,
   },
+
   description: {
     fontSize: 16,
     color: '#EEEEEE',
     marginBottom: 15,
   },
+
   location: {
     fontSize: 16,
     color: '#EEEEEE',
     marginBottom: 20,
   },
+
   userContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 20,
   },
+
   userIcon: {
     marginRight: 10,
   },
+
   userName: {
     fontSize: 18,
     fontWeight: 'bold',

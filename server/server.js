@@ -100,10 +100,10 @@ app.post('/api/products', upload.single('image'), async (req, res) => {
 
 // Retrieve products for a specific user
 app.get('/api/products', async (req, res) => {
-  const userId = req.query.userId; // Get userId from query params
+  const userId = req.query.userId;
 
   try {
-    const products = await Product.find({ userId }); // Fetch only products for this user
+    const products = await Product.find({ userId });
     res.json(products);
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -152,7 +152,6 @@ app.get('/api/products/others', async (req, res) => {
   }
 
   try {
-    // Fetch products where the userId does not match the specified user ID
     const products = await Product.find({ userId: { $ne: userId } });
     res.json(products);
   } catch (error) {

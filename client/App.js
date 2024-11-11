@@ -10,6 +10,7 @@ import PostProduct from './screens/products';
 import Profile from './screens/profile';
 import CreateProduct from './screens/createProduct';
 import EditProduct from './screens/editProduct';
+import ViewProduct from './screens/viewProduct';
 import { Ionicons } from '@expo/vector-icons';
 
 const Stack = createStackNavigator();
@@ -56,6 +57,7 @@ export default function App() {
         <Stack.Screen name="Main" component={TabNavigator} />
         <Stack.Screen name="CreateProduct" component={ScreenWrapper(CreateProduct)} />
         <Stack.Screen name="EditProduct" component={ScreenWrapper(EditProduct)} />
+        <Stack.Screen name="ViewProduct" component={ScreenWrapper(ViewProduct)} />
       </Stack.Navigator>
     </NavigationContainer>
   );
