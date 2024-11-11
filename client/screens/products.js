@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image } from 'react
 import { useFocusEffect } from '@react-navigation/native';
 import { auth } from '../firebase';
 
-const Products  = ({ navigation }) => {
+const Products = ({ navigation }) => {
   const [products, setProducts] = useState([]);
   const userId = auth.currentUser.uid;
 
@@ -23,20 +23,22 @@ const Products  = ({ navigation }) => {
     }, [])
   );
 
+  const handleProductPress = (product) => {
+    navigation.navigate('EditProduct', { product });
+  };
+
   const renderProduct = ({ item }) => (
-    <View style={styles.productBox}>
-      <View style={styles.productInfo}>
-        <Text style={styles.productTitle}>{item.title}</Text>
-        <Text style={styles.productDescription}>{item.description}</Text>
-        <Text style={styles.productPrice}>${item.price}</Text>
+    <TouchableOpacity onPress={() => handleProductPress(item)}>
+      <View style={styles.productBox}>
+        <View style={styles.productInfo}>
+          <Text style={styles.productTitle}>{item.title}</Text>
+          <Text style={styles.productDescription}>{item.description}</Text>
+          <Text style={styles.productPrice}>${item.price}</Text>
+        </View>
+
+        <Image source={{ uri: item.imageUrl }} style={styles.productImage} onError={() => console.log("Error loading image:", item.imageUrl)}/>
       </View>
-      
-      <Image
-        source={{ uri: item.imageUrl }}
-        style={styles.productImage}
-        onError={() => console.log("Error loading image:", item.imageUrl)}
-      />
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -44,7 +46,7 @@ const Products  = ({ navigation }) => {
       <Text style={styles.title}>My Listings</Text>
       
       {products.length === 0 ? (
-        <Text style={styles.noListings}>No listings</Text>
+          <Text style={styles.noListings}>No listings</Text>
         ) : (
           <FlatList
             data={products}
@@ -52,7 +54,8 @@ const Products  = ({ navigation }) => {
             keyExtractor={(item) => item._id}
             contentContainerStyle={styles.list}
           />
-        )}
+        )
+      }
       
       <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('CreateProduct')}>
         <Text style={styles.addButtonText}>+</Text>
@@ -130,7 +133,7 @@ const styles = StyleSheet.create({
     right: 20,
     bottom: 20,
     backgroundColor: '#00ADB5',
-    borderRadius: 15,
+    borderRadius: 30,
     width: 60,
     height: 60,
     alignItems: 'center',
