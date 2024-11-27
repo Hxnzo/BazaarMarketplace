@@ -30,6 +30,23 @@ const EditProduct = ({ route, navigation }) => {
     }
   };
 
+  const takePhotoAsync = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Sorry, we need camera permissions to make this work!');
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: false,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri);
+    }
+  };
+
   const handleUpdateProduct = async () => {
     if (!title.trim() || !description.trim() || isNaN(price) || parseFloat(price) <= 0 || !location.trim() || !selectedImage) {
       Alert.alert('Validation Error', 'Please fill all fields correctly.');
@@ -116,9 +133,15 @@ const EditProduct = ({ route, navigation }) => {
         <Text style={styles.label}>Location</Text>
         <TextInput style={styles.input} placeholder="Location" placeholderTextColor="#EEEEEE" value={location} onChangeText={setLocation} />
 
-        <TouchableOpacity onPress={pickImageAsync} style={styles.imageButton}>
-          <Text style={styles.imageButtonText}>Select Image</Text>
-        </TouchableOpacity>
+        <View style={styles.imageButtonContainer}>
+          <TouchableOpacity onPress={pickImageAsync} style={styles.imageButton}>
+            <Text style={styles.imageButtonText}>Select Image</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={takePhotoAsync} style={styles.imageButton}>
+            <Text style={styles.imageButtonText}>Take Photo</Text>
+          </TouchableOpacity>
+        </View>
 
         {selectedImage && (
           <Image source={{ uri: selectedImage }} style={styles.imagePreview} />
@@ -172,13 +195,19 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
 
+  imageButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
   imageButton: {
     backgroundColor: '#00ADB5',
     padding: 15,
     borderRadius: 8,
-    marginTop: 20,
     alignItems: 'center',
-  },
+    flex: 1,
+    marginHorizontal: 5,
+  },  
 
   imageButtonText: {
     color: '#EEEEEE',
