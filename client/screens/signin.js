@@ -3,35 +3,42 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 
+// Signin component allows users to log in with their email and password
 const Signin = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState(''); // State to manage email input
+  const [password, setPassword] = useState(''); // State to manage password input
 
+  // Handle the sign-in process using Firebase authentication
   const handleSignin = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      
+      await signInWithEmailAndPassword(auth, email, password); // Authenticate user
+
       console.log('User signed in!');
-      navigation.navigate('Main');
+      navigation.navigate('Main'); // Navigate to the main application screen upon success
     } 
     catch (error) {
-      console.error(error);
-      alert('Invalid credentials');
+      console.error(error); // Log error details
+      alert('Invalid credentials'); // Show an error alert for invalid login
     }
-  };  
+  };
 
+  // Render the sign-in screen UI
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sign In</Text>
 
-      <TextInput style={styles.input} placeholder="Email" placeholderTextColor="#EEEEEE" onChangeText={setEmail} value={email} keyboardType="email-address" autoCapitalize="none" />
+      {/* Email input field */}
+      <TextInput style={styles.input} placeholder="Email" placeholderTextColor="#EEEEEE" onChangeText={setEmail} value={email} keyboardType="email-address" autoCapitalize="none"/>
 
-      <TextInput style={styles.input} placeholder="Password" placeholderTextColor="#EEEEEE" onChangeText={setPassword} value={password} secureTextEntry />
+      {/* Password input field */}
+      <TextInput style={styles.input} placeholder="Password" placeholderTextColor="#EEEEEE" onChangeText={setPassword} value={password} secureTextEntry/>
 
-      <TouchableOpacity style={styles.button} onPress={handleSignin}>
+      {/* Sign-in button */}
+      <TouchableOpacity style={styles.button} onPress={handleSignin}> 
         <Text style={styles.buttonText}>Sign In</Text>
       </TouchableOpacity>
 
+      {/* Link to the signup screen */}
       <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
         <Text style={styles.link}>Don't have an account? Sign Up</Text>
       </TouchableOpacity>
@@ -39,6 +46,7 @@ const Signin = ({ navigation }) => {
   );
 };
 
+// Styling for the components
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -3,23 +3,26 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'rea
 import { FontAwesome } from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps';
 
+// ViewProduct component displays the details of a selected product
 const ViewProduct = ({ route, navigation }) => {
-  const { product } = route.params;
-  const [userData, setUserData] = useState(null);
-  const [locationCoords, setLocationCoords] = useState(null);
-  const [region, setRegion] = useState(null); // State for the map region
+  const { product } = route.params; // Retrieve the product details from route parameters
+  const [userData, setUserData] = useState(null); // State to store user data of the product owner
+  const [locationCoords, setLocationCoords] = useState(null); // State to store the product's location coordinates
+  const [region, setRegion] = useState(null); // State to manage the map region
 
+  // Fetch user data and coordinates when the component mounts
   useEffect(() => {
-    fetchUserData();
-    fetchCoordinates(product.location);
+    fetchUserData(); // Fetch the product owner's data
+    fetchCoordinates(product.location); // Fetch coordinates for the product's location
   }, []);
 
+  // Fetch user information from the backend
   const fetchUserData = async () => {
     try {
       const response = await fetch(`http://10.0.2.2:3001/api/user/${product.userId}`);
       if (response.ok) {
         const data = await response.json();
-        setUserData(data);
+        setUserData(data); // Update user data state
       } else {
         console.error('Error fetching user data');
       }
@@ -28,12 +31,11 @@ const ViewProduct = ({ route, navigation }) => {
     }
   };
 
+  // Fetch coordinates for the product's location using an external API
   const fetchCoordinates = async (city) => {
     try {
       const response = await fetch(
-        `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
-          city
-        )}&key=0bb96fbf1f97407ba07ad06abe10b843`
+        `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(city)}&key=0bb96fbf1f97407ba07ad06abe10b843`
       );
       if (response.ok) {
         const data = await response.json();
@@ -45,8 +47,8 @@ const ViewProduct = ({ route, navigation }) => {
             latitudeDelta: 0.1,
             longitudeDelta: 0.1,
           };
-          setLocationCoords({ latitude: lat, longitude: lng });
-          setRegion(initialRegion); // Set the initial region
+          setLocationCoords({ latitude: lat, longitude: lng }); // Set location coordinates
+          setRegion(initialRegion); // Set map region
         }
       } else {
         console.error('Error fetching coordinates');
@@ -56,7 +58,7 @@ const ViewProduct = ({ route, navigation }) => {
     }
   };
 
-  // Handlers for zoom in and zoom out
+  // Handlers for zooming in and out on the map
   const zoomIn = () => {
     setRegion((prevRegion) => ({
       ...prevRegion,
@@ -73,31 +75,33 @@ const ViewProduct = ({ route, navigation }) => {
     }));
   };
 
+  // Render the product details
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
+        {/* Back button to navigate back to the previous screen */}
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <FontAwesome name="arrow-left" size={20} color="#222831" />
         </TouchableOpacity>
 
-        {/* Product Image */}
+        {/* Display product image */}
         <Image source={{ uri: product.imageUrl }} style={styles.productImage} />
 
-        {/* Product Title and Price */}
+        {/* Product title and price */}
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{product.title}</Text>
           <Text style={styles.price}>${product.price}</Text>
         </View>
 
-        {/* Product Description */}
+        {/* Product description */}
         <Text style={styles.sectionTitle}>Description</Text>
         <Text style={styles.description}>{product.description}</Text>
 
-        {/* Product Location */}
+        {/* Product location */}
         <Text style={styles.sectionTitle}>Location</Text>
         <Text style={styles.location}>{product.location}</Text>
 
-        {/* Map */}
+        {/* Map displaying the product's location */}
         {region && (
           <View style={styles.mapContainer}>
             <MapView
@@ -118,7 +122,7 @@ const ViewProduct = ({ route, navigation }) => {
           </View>
         )}
 
-        {/* Contact Information */}
+        {/* Contact information */}
         {userData && (
           <View style={styles.contactContainer}>
             <Text style={styles.sectionTitle}>Contact</Text>
@@ -126,7 +130,7 @@ const ViewProduct = ({ route, navigation }) => {
           </View>
         )}
 
-        {/* User Information */}
+        {/* User information */}
         {userData && (
           <View style={styles.userContainer}>
             <FontAwesome name="user-circle" size={50} color="#EEEEEE" style={styles.userIcon} />
@@ -140,6 +144,7 @@ const ViewProduct = ({ route, navigation }) => {
   );
 };
 
+// Styling for the components
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,

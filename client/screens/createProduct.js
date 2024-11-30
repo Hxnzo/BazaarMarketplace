@@ -3,79 +3,65 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView,
 import * as ImagePicker from 'expo-image-picker';
 import { auth } from '../firebase';
 
+// Component for creating a new product
 const CreateProduct = ({ navigation }) => {
+  // States to hold form data
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [location, setLocation] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
 
+  // Function to pick an image from the device gallery
   const pickImageAsync = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      alert('Sorry, we need camera roll permissions to make this work!');
+      alert('Camera roll permissions are required!');
       return;
     }
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
       quality: 1,
     });
-
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
     }
   };
 
+  // Function to capture an image using the device camera
   const takePhotoAsync = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      alert('Sorry, we need camera permissions to make this work!');
+      alert('Camera permissions are required!');
       return;
     }
-
-    const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: false,
-      quality: 1,
-    });
-
+    const result = await ImagePicker.launchCameraAsync({ quality: 1 });
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
     }
   };
 
+  // Function to validate inputs and save the product
   const handleSaveProduct = async () => {
-    // Validation
-    if (!title.trim()) {
-      Alert.alert('Validation Error', 'Please enter a valid title.');
+    // Input validation checks
+    if (!title.trim() || !description.trim() || !location.trim()) {
+      Alert.alert('Validation Error', 'All fields must be filled.');
       return;
     }
-
-    if (!description.trim()) {
-      Alert.alert('Validation Error', 'Please enter a valid description.');
-      return;
-    }
-
     if (!price || isNaN(price) || parseFloat(price) <= 0) {
-      Alert.alert('Validation Error', 'Please enter a valid price greater than zero.');
+      Alert.alert('Validation Error', 'Enter a valid price.');
       return;
     }
-
-    if (!location.trim()) {
-      Alert.alert('Validation Error', 'Please enter a valid location.');
-      return;
-    }
-
     if (!selectedImage) {
       Alert.alert('Validation Error', 'Please select an image.');
       return;
     }
 
+    // Forming the product data with an image for upload
     const formData = new FormData();
     formData.append('title', title);
     formData.append('description', description);
-    formData.append('price', parseFloat(price)); // Convert price to a number
+    formData.append('price', parseFloat(price));
     formData.append('location', location);
     formData.append('userId', auth.currentUser.uid);
     formData.append('image', {
@@ -85,33 +71,38 @@ const CreateProduct = ({ navigation }) => {
     });
 
     try {
+      // Sending the product data to the server
       const response = await fetch('http://10.0.2.2:3001/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'multipart/form-data' },
         body: formData,
       });
 
-      if (response.ok) {
-        Alert.alert('Success', 'Product added successfully');
-        navigation.goBack();
-      } else {
-        console.error('Error adding product:', response.statusText);
-        Alert.alert('Error', 'There was an issue adding the product.');
+      if (response.ok) 
+      {
+        Alert.alert('Success', 'Product added successfully.');
+        navigation.goBack(); // Navigate back after success
+      } 
+      else {
+        Alert.alert('Error', 'Failed to add the product.');
       }
-    } catch (error) {
-      console.error('Error:', error);
-      Alert.alert('Error', 'There was an error with the server.');
+    } 
+    catch (error) {
+      Alert.alert('Error', 'Server error occurred.');
     }
   };
 
+  // Function to cancel and navigate back
   const handleCancel = () => {
     navigation.goBack();
   };
 
+  // UI for the Create Product form
   return (
     <View style={styles.container}>
       <Text style={styles.title}>New Ad</Text>
 
+      {/* Form inputs */}
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.label}>Title</Text>
         <TextInput style={styles.input} placeholder="Title" placeholderTextColor="#EEEEEE" value={title} onChangeText={setTitle}/>
@@ -125,6 +116,7 @@ const CreateProduct = ({ navigation }) => {
         <Text style={styles.label}>Location</Text>
         <TextInput style={styles.input} placeholder="Location" placeholderTextColor="#EEEEEE" value={location} onChangeText={setLocation}/>
 
+        {/* Image selection buttons */}
         <View style={styles.imageButtonContainer}>
           <TouchableOpacity onPress={pickImageAsync} style={styles.imageButton}>
             <Text style={styles.imageButtonText}>Select Image</Text>
@@ -135,12 +127,13 @@ const CreateProduct = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-
+        {/* Preview selected image */}
         {selectedImage && (
           <Image source={{ uri: selectedImage }} style={styles.imagePreview} />
         )}
       </ScrollView>
 
+      {/* Save and Cancel buttons */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.saveButton} onPress={handleSaveProduct}>
           <Text style={styles.saveButtonText}>Save</Text>
@@ -153,6 +146,7 @@ const CreateProduct = ({ navigation }) => {
   );
 };
 
+// Styling for components
 const styles = StyleSheet.create({
   container: {
     flex: 1,

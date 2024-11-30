@@ -2,50 +2,58 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { auth } from '../firebase';
 
+// Home component displays a list of products from other users
 const Home = ({ navigation }) => {
-  const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const userId = auth.currentUser.uid;
+  const [products, setProducts] = useState([]); // State to store all products
+  const [filteredProducts, setFilteredProducts] = useState([]); // State to store filtered products based on search
+  const [searchQuery, setSearchQuery] = useState(''); // State to manage search input
+  const userId = auth.currentUser.uid; // Get the logged-in user's ID
 
+  // Fetch products when the component mounts
   useEffect(() => {
     fetchProducts();
   }, []);
 
+  // Fetch products from the server excluding the current user's listings
   const fetchProducts = async () => {
     try {
-      const response = await fetch(`http://10.0.2.2:3001/api/products/others?userId=${userId}`);
-      
+      const response = await fetch(
+        `http://10.0.2.2:3001/api/products/others?userId=${userId}`
+      );
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Error fetching products:', errorText);
         return;
       }
-  
+
       const data = await response.json();
-      setProducts(data);
-      setFilteredProducts(data);
+      setProducts(data); // Set the full list of products
+      setFilteredProducts(data); // Initialize filtered products with the full list
     } catch (error) {
       console.error('Error fetching products:', error);
     }
   };
 
+  // Handle search input and filter products based on the query
   const handleSearch = (query) => {
-    setSearchQuery(query);
+    setSearchQuery(query); // Update the search query state
     if (query.trim() === '') {
-      setFilteredProducts(products);
+      setFilteredProducts(products); // Reset to all products if search query is empty
     } else {
       const filtered = products.filter((product) =>
         product.title.toLowerCase().includes(query.toLowerCase())
       );
-      setFilteredProducts(filtered);
+      setFilteredProducts(filtered); // Update filtered products with matching results
     }
   };
 
+  // Navigate to the product view screen when a product is clicked
   const handleProductPress = (product) => {
     navigation.navigate('ViewProduct', { product });
   };
 
+  // Render individual product items in the FlatList
   const renderProduct = ({ item }) => (
     <TouchableOpacity onPress={() => handleProductPress(item)}>
       <View style={styles.productBox}>
@@ -55,31 +63,45 @@ const Home = ({ navigation }) => {
           <Text style={styles.productPrice}>${item.price}</Text>
         </View>
 
-        <Image source={{ uri: item.imageUrl }} style={styles.productImage} onError={() => console.log("Error loading image:", item.imageUrl)}/>
+        <Image
+          source={{ uri: item.imageUrl }}
+          style={styles.productImage}
+          onError={() => console.log('Error loading image:', item.imageUrl)}
+        />
       </View>
     </TouchableOpacity>
   );
 
+  // Render the main UI for the Home screen
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Marketplace</Text>
-      
-      <TextInput style={styles.searchBar} placeholder="Search for products..." placeholderTextColor="#888" value={searchQuery} onChangeText={handleSearch}/>
 
+      {/* Search bar for filtering products */}
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Search for products..."
+        placeholderTextColor="#888"
+        value={searchQuery}
+        onChangeText={handleSearch}
+      />
+
+      {/* Display a message if no listings are found, or render the product list */}
       {filteredProducts.length === 0 ? (
-          <Text style={styles.noListings}>No listings found</Text>
-        ) : (
-          <FlatList
-            data={filteredProducts}
-            renderItem={renderProduct}
-            keyExtractor={(item) => item._id}
-            contentContainerStyle={styles.list}
-          />
-        )}
+        <Text style={styles.noListings}>No listings found</Text>
+      ) : (
+        <FlatList
+          data={filteredProducts}
+          renderItem={renderProduct}
+          keyExtractor={(item) => item._id} // Unique key for each product
+          contentContainerStyle={styles.list}
+        />
+      )}
     </View>
   );
 };
 
+// Styling for the components
 const styles = StyleSheet.create({
   container: {
     flex: 1,

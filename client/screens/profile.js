@@ -4,11 +4,13 @@ import axios from 'axios';
 import { signOut, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import { auth } from '../firebase';
 
+// Profile component allows the user to view, edit, and update their profile information
 const Profile = ({ navigation }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState(false);
+  const [user, setUser] = useState(null); // State to store user data
+  const [loading, setLoading] = useState(true); // State to track loading state
+  const [editing, setEditing] = useState(false); // State to toggle between view and edit mode
 
+  // Form data state to manage profile fields
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -18,43 +20,45 @@ const Profile = ({ navigation }) => {
     phoneNumber: '',
   });
 
+  // States for handling password changes
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  // Handle user sign-out and navigate back to the Signin screen
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      navigation.navigate('Signin'); 
-    } 
-    catch (error) {
+      navigation.navigate('Signin');
+    } catch (error) {
       console.error('Error signing out:', error);
     }
   };
 
+  // Fetch user data from the server
   const fetchUserData = async () => {
     try {
-      const uid = auth.currentUser.uid;
+      const uid = auth.currentUser.uid; // Get the current user's ID
       const response = await axios.get(`http://10.0.2.2:3001/api/user/${uid}`);
-
-      setUser(response.data);
-      setFormData(response.data);
-    } 
-    catch (error) {
+      setUser(response.data); // Set user data
+      setFormData(response.data); // Populate form data with user data
+    } catch (error) {
       console.error('Error fetching user data:', error);
-    } 
-    finally {
-      setLoading(false);
+    } finally {
+      setLoading(false); // Stop loading once data is fetched
     }
   };
 
+  // Fetch user data when the component mounts
   useEffect(() => {
     fetchUserData();
   }, []);
 
+  // Toggle between edit and view mode
   const handleEditToggle = () => {
     setEditing(!editing);
 
+    // Reset form and password fields when toggling out of edit mode
     if (editing) {
       setFormData(user);
       setOldPassword('');
@@ -63,62 +67,62 @@ const Profile = ({ navigation }) => {
     }
   };
 
+  // Save updated profile information
   const handleSave = async () => {
     try {
-      const uid = auth.currentUser.uid;
+      const uid = auth.currentUser.uid; // Get the current user's ID
       const updatedData = { ...formData };
-  
-      // Reauthenticate with current password
-      if (oldPassword) 
-      {
-        const credential = EmailAuthProvider.credential(auth.currentUser.email, oldPassword);
+
+      // Reauthenticate the user with their current password
+      if (oldPassword) {
+        const credential = EmailAuthProvider.credential(
+          auth.currentUser.email,
+          oldPassword
+        );
         await reauthenticateWithCredential(auth.currentUser, credential);
-      } 
-      else {
-        alert('Please fill in \'Current Password\' field to make changes to email.');
+      } else {
+        alert("Please fill in 'Current Password' field to make changes to email.");
         return;
       }
-  
-      // Check if the email was changed
+
+      // Update email if it was changed
       if (user.email !== formData.email) {
         await updateEmail(auth.currentUser, formData.email);
         updatedData.email = formData.email;
       }
-  
-      // Check if the password is being changed
+
+      // Update password if it was provided and matches confirmation
       if (newPassword && newPassword === confirmPassword) {
         await updatePassword(auth.currentUser, newPassword);
         alert('Password updated successfully');
-      } 
-      else if (newPassword !== confirmPassword) {
+      } else if (newPassword !== confirmPassword) {
         alert('New password and confirmation do not match');
         return;
       }
-  
-      // Update other fields in MongoDB
-      await axios.put(`http://10.0.2.2:3001/api/user/${uid}`, updatedData);
-      setUser(updatedData);
 
+      // Update other profile fields in the database
+      await axios.put(`http://10.0.2.2:3001/api/user/${uid}`, updatedData);
+      setUser(updatedData); // Update local user state
       alert('Profile updated successfully');
-      setEditing(false);
-    } 
-    catch (error) 
-    {
+      setEditing(false); // Exit edit mode
+    } catch (error) {
       console.error('Error updating profile:', error);
       alert(error.message);
     }
   };
-  
 
+  // Show a loading spinner while data is being fetched
   if (loading) {
     return <ActivityIndicator size="large" color="#00ADB5" />;
   }
 
+  // Render the main UI for the profile screen
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer} style={styles.scrollView}>
       <View style={styles.container}>
         <Text style={styles.title}>Profile</Text>
 
+        {/* Render profile fields */}
         <TextInput style={[styles.input, !editing && styles.readOnly]} placeholder="First Name" value={formData.firstName} onChangeText={(text) => setFormData({ ...formData, firstName: text })} editable={editing}/>
 
         <TextInput style={[styles.input, !editing && styles.readOnly]} placeholder="Last Name" value={formData.lastName} onChangeText={(text) => setFormData({ ...formData, lastName: text })} editable={editing}/>
@@ -129,18 +133,21 @@ const Profile = ({ navigation }) => {
 
         <TextInput style={[styles.input, !editing && styles.readOnly]} placeholder="Province" value={formData.province} onChangeText={(text) => setFormData({ ...formData, province: text })} editable={editing}/>
 
-        <TextInput style={[styles.input, !editing && styles.readOnly]} placeholder="Phone Number" value={formData.phoneNumber} onChangeText={(text) => setFormData({ ...formData, phoneNumber: text })} editable={editing}/>
+        <TextInput style={[styles.input, !editing && styles.readOnly]} placeholder="Phone Number" value={formData.phoneNumber} onChangeText={(text) => setFormData({ ...formData, phoneNumber: text }) } editable={editing}/>
 
+        {/* Render password fields when editing */}
         {editing && (
           <>
             <TextInput style={styles.input} placeholder="Current Password" value={oldPassword} onChangeText={setOldPassword} secureTextEntry/>
+
             <TextInput style={styles.input} placeholder="New Password" value={newPassword} onChangeText={setNewPassword} secureTextEntry/>
-            <TextInput style={styles.input} placeholder="Confirm New Password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry/>
+
+            <TextInput style={styles.input} placeholder="Confirm New Password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry />
           </>
         )}
 
-        {editing ? 
-        (
+        {/* Render Save/Cancel buttons when editing or Edit button otherwise */}
+        {editing ? (
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={[styles.button, styles.saveButton]} onPress={handleSave}>
               <Text style={styles.buttonText}>Save</Text>
@@ -149,21 +156,22 @@ const Profile = ({ navigation }) => {
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
-        ) : 
-        (
+        ) : (
           <TouchableOpacity style={[styles.button, styles.editButton]} onPress={handleEditToggle}>
             <Text style={styles.buttonText}>Edit</Text>
           </TouchableOpacity>
         )}
 
+        {/* Render Sign Out button */}
         <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
-            <Text style={styles.signOutButtonText}>Sign Out</Text>
+          <Text style={styles.signOutButtonText}>Sign Out</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 };
 
+// Styling for the components
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,

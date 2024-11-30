@@ -3,64 +3,63 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView,
 import * as ImagePicker from 'expo-image-picker';
 import { auth } from '../firebase';
 
+// EditProduct component allows editing an existing product
 const EditProduct = ({ route, navigation }) => {
-  const { product } = route.params;
+  const { product } = route.params; // Get product details from route parameters
+
+  // Initialize state variables with existing product details
   const [title, setTitle] = useState(product.title);
   const [description, setDescription] = useState(product.description);
   const [price, setPrice] = useState(String(product.price));
   const [location, setLocation] = useState(product.location);
   const [selectedImage, setSelectedImage] = useState(product.imageUrl);
 
+  // Function to pick an image from the device gallery
   const pickImageAsync = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
     if (status !== 'granted') {
-      alert('Sorry, we need camera roll permissions to make this work!');
+      alert('Camera roll permissions are required!');
       return;
     }
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
       quality: 1,
     });
-
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
+      setSelectedImage(result.assets[0].uri); // Update state with selected image URI
     }
   };
 
+  // Function to capture a new image using the device camera
   const takePhotoAsync = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      alert('Sorry, we need camera permissions to make this work!');
+      alert('Camera permissions are required!');
       return;
     }
-
-    const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: false,
-      quality: 1,
-    });
-
+    const result = await ImagePicker.launchCameraAsync({ quality: 1 });
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri);
+      setSelectedImage(result.assets[0].uri); // Update state with captured image URI
     }
   };
 
+  // Function to handle updating the product details
   const handleUpdateProduct = async () => {
+    // Validate input fields
     if (!title.trim() || !description.trim() || isNaN(price) || parseFloat(price) <= 0 || !location.trim() || !selectedImage) {
       Alert.alert('Validation Error', 'Please fill all fields correctly.');
       return;
     }
-  
+
+    // Create form data for the updated product
     const formData = new FormData();
     formData.append('title', title);
     formData.append('description', description);
     formData.append('price', parseFloat(price));
     formData.append('location', location);
     formData.append('userId', auth.currentUser.uid);
-    
-    // Check if the image was updated
+
+    // Add the image only if it has been changed
     if (selectedImage !== product.imageUrl) {
       formData.append('image', {
         uri: selectedImage,
@@ -68,8 +67,9 @@ const EditProduct = ({ route, navigation }) => {
         type: `image/${selectedImage.split('.').pop()}`,
       });
     }
-  
+
     try {
+      // Send updated product details to the server
       const response = await fetch(`http://10.0.2.2:3001/api/products/${product._id}`, {
         method: 'PUT',
         headers: {
@@ -78,21 +78,19 @@ const EditProduct = ({ route, navigation }) => {
         },
         body: formData,
       });
-  
+
       if (response.ok) {
         Alert.alert('Success', 'Product updated successfully');
-        navigation.goBack();
+        navigation.goBack(); // Navigate back after successful update
       } else {
-        console.error('Error updating product:', response.statusText);
         Alert.alert('Error', 'Failed to update product');
       }
     } catch (error) {
-      console.error('Error:', error);
-      Alert.alert('Error', 'There was an error with the server.');
+      Alert.alert('Error', 'There was a server error.');
     }
   };
-  
 
+  // Function to handle deleting the product
   const handleDeleteProduct = async () => {
     try {
       const response = await fetch(`http://10.0.2.2:3001/api/products/${product._id}`, {
@@ -101,37 +99,62 @@ const EditProduct = ({ route, navigation }) => {
 
       if (response.ok) {
         Alert.alert('Success', 'Product deleted successfully');
-        navigation.goBack();
+        navigation.goBack(); // Navigate back after successful deletion
       } else {
-        console.error('Error deleting product:', response.statusText);
         Alert.alert('Error', 'Failed to delete product');
       }
     } catch (error) {
-      console.error('Error:', error);
-      Alert.alert('Error', 'There was an error with the server.');
+      Alert.alert('Error', 'There was a server error.');
     }
   };
 
+  // Function to cancel and navigate back without making changes
   const handleCancel = () => {
     navigation.goBack();
   };
 
+  // Render the UI for editing the product
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Edit Ad</Text>
 
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.label}>Title</Text>
-        <TextInput style={styles.input} placeholder="Title" placeholderTextColor="#EEEEEE" value={title} onChangeText={setTitle} />
+        <TextInput
+          style={styles.input}
+          placeholder="Title"
+          placeholderTextColor="#EEEEEE"
+          value={title}
+          onChangeText={setTitle}
+        />
 
         <Text style={styles.label}>Description</Text>
-        <TextInput style={styles.input} placeholder="Description" placeholderTextColor="#EEEEEE" value={description} onChangeText={setDescription} />
+        <TextInput
+          style={styles.input}
+          placeholder="Description"
+          placeholderTextColor="#EEEEEE"
+          value={description}
+          onChangeText={setDescription}
+        />
 
         <Text style={styles.label}>Price</Text>
-        <TextInput style={styles.input} placeholder="Price" placeholderTextColor="#EEEEEE" keyboardType="numeric" value={price} onChangeText={setPrice} />
+        <TextInput
+          style={styles.input}
+          placeholder="Price"
+          placeholderTextColor="#EEEEEE"
+          keyboardType="numeric"
+          value={price}
+          onChangeText={setPrice}
+        />
 
         <Text style={styles.label}>Location</Text>
-        <TextInput style={styles.input} placeholder="Location" placeholderTextColor="#EEEEEE" value={location} onChangeText={setLocation} />
+        <TextInput
+          style={styles.input}
+          placeholder="Location"
+          placeholderTextColor="#EEEEEE"
+          value={location}
+          onChangeText={setLocation}
+        />
 
         <View style={styles.imageButtonContainer}>
           <TouchableOpacity onPress={pickImageAsync} style={styles.imageButton}>
@@ -163,6 +186,7 @@ const EditProduct = ({ route, navigation }) => {
   );
 };
 
+// Styling for the components
 const styles = StyleSheet.create({
   container: {
     flex: 1,
